@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http; 
+use App\Models\Watchlist;
+use App\Models\Review;
 
 class MovieController extends Controller
 {
     /**
      * Langkah 3: Menampilkan Kategori Tren (Halaman Utama / Dashboard)
      */
-    public function index()
+        public function index()
     {
         $response = Http::withToken(config('services.tmdb.token'))
             ->get('https://api.themoviedb.org/3/trending/movie/day')
@@ -18,7 +20,21 @@ class MovieController extends Controller
 
         $trendingMovies = $response['results'] ?? [];
 
-        return view('dashboard', compact('trendingMovies'));
+        $watchlistCount = Watchlist::where(
+            'user_id',
+            auth()->id()
+        )->count();
+
+        $reviewCount = Review::where(
+            'user_id',
+            auth()->id()
+        )->count();
+
+        return view('dashboard', compact(
+            'trendingMovies',
+            'watchlistCount',
+            'reviewCount'
+        ));
     }
 
     /**
