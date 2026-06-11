@@ -1,104 +1,164 @@
 <x-app-layout>
 
-    <div class="max-w-7xl mx-auto py-8">
+    <div class="max-w-7xl mx-auto py-10 px-4">
 
-        <h1 class="text-3xl font-bold mb-6">
-            ⭐ My Reviews
-        </h1>
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800">
+                ⭐ My Reviews
+            </h1>
 
-        {{-- Form Tambah Review --}}
-        <div class="bg-white p-6 rounded-xl shadow mb-6">
+            <p class="text-gray-500 mt-2">
+                Bagikan pendapatmu tentang film favoritmu.
+            </p>
+        </div>
+
+        <!-- Form Review -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
+
+            <h2 class="text-xl font-bold mb-4">
+                ✍️ Tulis Review Baru
+            </h2>
 
             <form action="{{ route('reviews.store') }}" method="POST">
 
                 @csrf
 
-                <div class="mb-4">
-                    <label class="block font-semibold">
-                        Movie ID
-                    </label>
+                <div class="grid md:grid-cols-2 gap-4">
 
-                    <input
-                        type="number"
-                        name="movie_id"
-                        class="w-full border rounded p-2"
-                        required>
+                    <div>
+                        <label class="block font-semibold mb-2">
+                            Movie ID
+                        </label>
+
+                        <input
+                            type="number"
+                            name="movie_id"
+                            class="w-full border rounded-lg p-3"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-2">
+                            Rating (1-5)
+                        </label>
+
+                        <input
+                            type="number"
+                            min="1"
+                            max="5"
+                            name="rating"
+                            class="w-full border rounded-lg p-3"
+                            required>
+                    </div>
+
                 </div>
 
-                <div class="mb-4">
-                    <label class="block font-semibold">
-                        Rating (1-5)
-                    </label>
+                <div class="mt-4">
 
-                    <input
-                        type="number"
-                        min="1"
-                        max="5"
-                        name="rating"
-                        class="w-full border rounded p-2"
-                        required>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block font-semibold">
+                    <label class="block font-semibold mb-2">
                         Review
                     </label>
 
                     <textarea
                         name="review"
                         rows="4"
-                        class="w-full border rounded p-2"
+                        class="w-full border rounded-lg p-3"
+                        placeholder="Tulis ulasan film..."
                         required></textarea>
+
                 </div>
 
                 <button
-                    class="bg-blue-500 text-black px-4 py-2 rounded">
-                    Simpan Review
+                    type="submit"
+                    class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                    ⭐ Simpan Review
                 </button>
 
             </form>
 
         </div>
 
-        {{-- List Review --}}
-        @forelse($reviews as $item)
+        <!-- Daftar Review -->
+        <div class="space-y-6">
 
-            <div class="bg-white p-6 rounded-xl shadow mb-4">
+            @forelse($reviews as $item)
 
-                <p class="font-bold">
-                    Movie ID: {{ $item->movie_id }}
-                </p>
+                <div class="bg-white rounded-2xl shadow-md p-6">
 
-                <p class="text-yellow-500">
-                    Rating: {{ $item->rating }}/5
-                </p>
+                    <div class="flex justify-between items-start">
 
-                <p class="mt-2">
-                    {{ $item->review }}
-                </p>
+                        <div>
 
-                <form
-                    action="{{ route('reviews.destroy', $item->id) }}"
-                    method="POST"
-                    class="mt-3">
+                            <h3 class="text-lg font-bold text-gray-800">
+                                🎬 Movie ID: {{ $item->movie_id }}
+                            </h3>
 
-                    @csrf
-                    @method('DELETE')
+                            <div class="mt-2">
 
-                    <button
-                        class="bg-red-500 text-black px-3 py-2 rounded">
-                        Hapus
-                    </button>
+                                @for($i = 1; $i <= 5; $i++)
 
-                </form>
+                                    @if($i <= $item->rating)
+                                        <span class="text-yellow-500 text-xl">★</span>
+                                    @else
+                                        <span class="text-gray-300 text-xl">★</span>
+                                    @endif
 
-            </div>
+                                @endfor
 
-        @empty
+                            </div>
 
-            <p>Belum ada review.</p>
+                        </div>
 
-        @endforelse
+                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            {{ $item->rating }}/5
+                        </span>
+
+                    </div>
+
+                    <p class="mt-4 text-gray-700 leading-relaxed">
+                        {{ $item->review }}
+                    </p>
+
+                    <form
+                        action="{{ route('reviews.destroy', $item->id) }}"
+                        method="POST"
+                        class="mt-5">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button
+                            type="submit"
+                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition">
+                            🗑 Hapus Review
+                        </button>
+
+                    </form>
+
+                </div>
+
+            @empty
+
+                <div class="bg-white rounded-2xl shadow-md p-10 text-center">
+
+                    <div class="text-6xl mb-4">
+                        ⭐
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-700">
+                        Belum Ada Review
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+                        Tulis review pertamamu sekarang.
+                    </p>
+
+                </div>
+
+            @endforelse
+
+        </div>
 
     </div>
 
