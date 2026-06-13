@@ -9,18 +9,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('watchlists', function (Blueprint $table) {
-
             $table->id();
-
+            
+            // Menghubungkan film ke user yang sedang login
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
             $table->integer('movie_id');
-
             $table->string('title');
-
-            $table->string('poster')->nullable();
+            
+            // Diubah menjadi poster_path agar match dengan variabel dari API TMDB
+            $table->string('poster_path')->nullable(); 
+            
+            // Ditambahkan kolom rating agar angka ★ bintangnya tidak hilang
+            $table->decimal('vote_average', 3, 1)->nullable(); 
 
             $table->timestamps();
         });

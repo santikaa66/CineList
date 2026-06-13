@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Watchlist extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'movie_id',
         'title',
-        'poster',
+        'poster_path',
+        'vote_average',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }

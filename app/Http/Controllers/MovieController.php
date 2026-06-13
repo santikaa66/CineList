@@ -4,60 +4,83 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http; 
+use Illuminate\Support\Facades\Log; // Untuk mencatat error jika ada masalah
 
 class MovieController extends Controller
 {
     /**
-     * Langkah 3: Menampilkan Kategori Tren (Halaman Utama / Dashboard)
+     * Menampilkan Kategori Tren (Halaman Utama / Dashboard)
      */
     public function index()
     {
-        $response = Http::withToken(config('services.tmdb.token'))
-            ->get('https://api.themoviedb.org/3/trending/movie/day')
-            ->json();
+        // Mendapatkan token langsung dari konfigurasi services
+        $token = config('services.tmdb.token');
 
-        $trendingMovies = $response['results'] ?? [];
+        // Menggunakan Http::withoutVerifying() untuk melewati proteksi SSL lokal yang sering memblokir API
+        $response = Http::withoutVerifying()
+            ->withToken($token)
+            ->get('https://api.themoviedb.org/3/trending/movie/day');
 
-        return view('dashboard', compact('trendingMovies'));
+        if ($response->failed()) {
+            // Jika gagal, sistem akan mencatat error di file storage/logs/laravel.log
+            Log::error('TMDB API Error Index: ' . $response->body());
+            $trendingMovies = [];
+        } else {
+            $trendingMovies = $response->json()['results'] ?? [];
+        }
+
+        return view('movies.index', compact('trendingMovies'));
     }
 
     /**
-     * Langkah 4: Fitur Pencarian Film (Search)
+     * Fitur Pencarian Film (Search)
      */
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $searchResults = [];
+        $searchResult = [];
+        $token = config('services.tmdb.token');
 
         if ($query) {
-            $response = Http::withToken(config('services.tmdb.token'))
+            $response = Http::withoutVerifying()
+                ->withToken($token)
                 ->get('https://api.themoviedb.org/3/search/movie', [
                     'query' => $query
-                ])->json();
+                ]);
 
-            $searchResults = $response['results'] ?? [];
+            if ($response->failed()) {
+                Log::error('TMDB API Error Search: ' . $response->body());
+            } else {
+                $searchResult = $response->json()['results'] ?? [];
+            }
         }
 
-        return view('search-results', compact('searchResults', 'query'));
+        return view('movies.search', compact('searchResult', 'query'));
     }
 
     /**
-     * Langkah 5: Halaman Detail Film (Sinopsis & Daftar Pemain)
+     * Halaman Detail Film (Sinopsis & Daftar Pemain)
      */
     public function show($id)
     {
-        $movieResponse = Http::withToken(config('services.tmdb.token'))
-            ->get("https://api.themoviedb.org/3/movie/{$id}")
-            ->json();
+        $token = config('services.tmdb.token');
 
-        $creditsResponse = Http::withToken(config('services.tmdb.token'))
-            ->get("https://api.themoviedb.org/3/movie/{$id}/credits")
-            ->json();
+        $movieResponse = Http::withoutVerifying()
+            ->withToken($token)
+            ->get("https://api.themoviedb.org/3/movie/{$id}");
 
-        $movie = $movieResponse;
-        
-        $actors = array_slice($creditsResponse['cast'] ?? [], 0, 5);
+        $creditsResponse = Http::withoutVerifying()
+            ->withToken($token)
+            ->get("https://api.themoviedb.org/3/movie/{$id}/credits");
 
-        return view('movie-detail', compact('movie', 'actors'));
+        if ($movieResponse->failed()) {
+            Log::error("TMDB API Error Show (ID: {$id}): " . $movieResponse->body());
+            abort(404, 'Film tidak ditemukan di TMDB');
+        }
+
+        $movie = $movieResponse->json();
+        $actors = array_slice($creditsResponse->json()['cast'] ?? [], 0, 5);
+
+        return view('movies.show', compact('movie', 'actors'));
     }
 }
