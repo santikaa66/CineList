@@ -13,7 +13,7 @@ class Watchlist extends Model
         'user_id',
         'movie_id',
         'title',
-        'poster_path',
+        'poster',
         'vote_average',
     ];
 }

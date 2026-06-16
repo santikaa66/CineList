@@ -41,9 +41,88 @@
                     </div>
 
                     <div class="action-buttons" style="display: flex; gap: 15px; max-width: 300px;">
-                        <button class="btn-watchlist" onclick="toggleWatchlist(this)" style="background: #6c5ce7; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; width: 100%;">
-                            <i class="fa-solid fa-plus"></i> Add to Watchlist
-                        </button>
+                        <form action="{{ route('watchlist.store') }}" method="POST">
+                            @csrf
+
+                            <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                            <input type="hidden" name="title" value="{{ $movie['title'] }}">
+
+                            <input type="hidden"
+                                name="poster"
+                                value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
+
+                            <button
+                                type="submit"
+                                style="background:#6c5ce7;color:white;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:600;width:100%;">
+                                <i class="fa-solid fa-plus"></i>
+                                Add to Watchlist
+                            </button>
+                        </form>
+
+                        <div style="margin-top:30px; width:100%; max-width:500px;">
+
+                            <h3 style="margin-bottom:12px; color:#f59e0b; font-size:18px; font-weight:700;">
+                                ⭐ Tulis Review
+                            </h3>
+
+                            <form action="{{ route('reviews.store') }}" method="POST">
+
+                                @csrf
+
+                                <input
+                                    type="hidden"
+                                    name="movie_id"
+                                    value="{{ $movie['id'] }}">
+
+                                <input
+                                    type="hidden"
+                                    name="title"
+                                    value="{{ $movie['title'] }}">
+
+                                <div style="margin-bottom:12px;">
+                                    <label style="display:block; margin-bottom:6px; color:#e0e0e0;">
+                                        Rating
+                                    </label>
+
+                                    <select
+                                        name="rating"
+                                        required
+                                        style="width:100%; padding:10px; border-radius:8px; color:black;">
+
+                                        <option value="1">⭐ 1</option>
+                                        <option value="2">⭐⭐ 2</option>
+                                        <option value="3">⭐⭐⭐ 3</option>
+                                        <option value="4">⭐⭐⭐⭐ 4</option>
+                                        <option value="5">⭐⭐⭐⭐⭐ 5</option>
+
+                                    </select>
+                                </div>
+
+                                <div style="margin-bottom:12px;">
+                                    <label style="display:block; margin-bottom:6px; color:#e0e0e0;">
+                                        Review
+                                    </label>
+
+                                    <textarea
+                                        name="review"
+                                        rows="4"
+                                        required
+                                        placeholder="Tulis pendapatmu tentang film ini..."
+                                        style="width:100%; padding:10px; border-radius:8px; color:black;"></textarea>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    style="background:#f59e0b; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; width:100%;">
+
+                                    ⭐ Simpan Review
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
                     </div>
                 </div>
 

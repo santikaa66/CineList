@@ -22,20 +22,28 @@ class ReviewController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'movie_id' => 'required',
+            'title' => 'required',
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required',
+        ]);
+
         Review::create([
             'user_id' => auth()->id(),
             'movie_id' => $request->movie_id,
+            'title' => $request->title,
             'rating' => $request->rating,
             'review' => $request->review,
         ]);
 
-        return back();
+        return back()->with('success', 'Review berhasil ditambahkan!');
     }
 
     public function destroy(Review $review)
     {
         $review->delete();
 
-        return back();
+        return back()->with('success', 'Review berhasil dihapus!');
     }
 }

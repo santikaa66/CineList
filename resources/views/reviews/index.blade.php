@@ -1,61 +1,62 @@
 <x-app-layout>
 
-    <div class="max-w-7xl mx-auto py-10 px-4">
+    <div class="max-w-5xl mx-auto py-8">
 
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-800">
-                ⭐ My Reviews
-            </h1>
+        <h1 class="text-3xl font-bold mb-6">
+            ⭐ My Reviews
+        </h1>
 
-            <p class="text-gray-500 mt-2">
-                Bagikan pendapatmu tentang film favoritmu.
-            </p>
-        </div>
+        @if(session('success'))
+            <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
 
-        <!-- Form Review -->
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
-
-            <h2 class="text-xl font-bold mb-4">
-                ✍️ Tulis Review Baru
-            </h2>
+        {{-- Form Review --}}
+        <div class="bg-white p-6 rounded-xl shadow mb-8">
 
             <form action="{{ route('reviews.store') }}" method="POST">
-
                 @csrf
 
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Movie ID
+                    </label>
 
-                    <div>
-                        <label class="block font-semibold mb-2">
-                            Movie ID
-                        </label>
-
-                        <input
-                            type="number"
-                            name="movie_id"
-                            class="w-full border rounded-lg p-3"
-                            required>
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold mb-2">
-                            Rating (1-5)
-                        </label>
-
-                        <input
-                            type="number"
-                            min="1"
-                            max="5"
-                            name="rating"
-                            class="w-full border rounded-lg p-3"
-                            required>
-                    </div>
-
+                    <input
+                        type="number"
+                        name="movie_id"
+                        class="w-full border rounded-lg p-2"
+                        required>
                 </div>
 
-                <div class="mt-4">
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Movie Title
+                    </label>
 
+                    <input
+                        type="text"
+                        name="title"
+                        class="w-full border rounded-lg p-2"
+                        required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Rating (1-5)
+                    </label>
+
+                    <input
+                        type="number"
+                        min="1"
+                        max="5"
+                        name="rating"
+                        class="w-full border rounded-lg p-2"
+                        required>
+                </div>
+
+                <div class="mb-4">
                     <label class="block font-semibold mb-2">
                         Review
                     </label>
@@ -63,102 +64,61 @@
                     <textarea
                         name="review"
                         rows="4"
-                        class="w-full border rounded-lg p-3"
-                        placeholder="Tulis ulasan film..."
+                        class="w-full border rounded-lg p-2"
                         required></textarea>
-
                 </div>
 
                 <button
                     type="submit"
-                    class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition">
-                    ⭐ Simpan Review
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg">
+                    Simpan Review
                 </button>
 
             </form>
 
         </div>
 
-        <!-- Daftar Review -->
-        <div class="space-y-6">
+        {{-- List Review --}}
+        @forelse($reviews as $item)
 
-            @forelse($reviews as $item)
+            <div class="bg-white p-6 rounded-xl shadow mb-4">
 
-                <div class="bg-white rounded-2xl shadow-md p-6">
+                <h2 class="font-bold text-xl">
+                    🎬 {{ $item->title }}
+                </h2>
 
-                    <div class="flex justify-between items-start">
+                <p class="text-yellow-500 font-semibold mt-2">
+                    ⭐ {{ $item->rating }}/5
+                </p>
 
-                        <div>
+                <p class="text-gray-700 mt-3">
+                    {{ $item->review }}
+                </p>
 
-                            <h3 class="text-lg font-bold text-gray-800">
-                                🎬 Movie ID: {{ $item->movie_id }}
-                            </h3>
+                <form
+                    action="{{ route('reviews.destroy', $item->id) }}"
+                    method="POST"
+                    class="mt-4">
 
-                            <div class="mt-2">
+                    @csrf
+                    @method('DELETE')
 
-                                @for($i = 1; $i <= 5; $i++)
+                    <button
+                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
+                        Hapus
+                    </button>
 
-                                    @if($i <= $item->rating)
-                                        <span class="text-yellow-500 text-xl">★</span>
-                                    @else
-                                        <span class="text-gray-300 text-xl">★</span>
-                                    @endif
+                </form>
 
-                                @endfor
+            </div>
 
-                            </div>
+        @empty
 
-                        </div>
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                Belum ada review.
+            </div>
 
-                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            {{ $item->rating }}/5
-                        </span>
-
-                    </div>
-
-                    <p class="mt-4 text-gray-700 leading-relaxed">
-                        {{ $item->review }}
-                    </p>
-
-                    <form
-                        action="{{ route('reviews.destroy', $item->id) }}"
-                        method="POST"
-                        class="mt-5">
-
-                        @csrf
-                        @method('DELETE')
-
-                        <button
-                            type="submit"
-                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition">
-                            🗑 Hapus Review
-                        </button>
-
-                    </form>
-
-                </div>
-
-            @empty
-
-                <div class="bg-white rounded-2xl shadow-md p-10 text-center">
-
-                    <div class="text-6xl mb-4">
-                        ⭐
-                    </div>
-
-                    <h2 class="text-2xl font-bold text-gray-700">
-                        Belum Ada Review
-                    </h2>
-
-                    <p class="text-gray-500 mt-2">
-                        Tulis review pertamamu sekarang.
-                    </p>
-
-                </div>
-
-            @endforelse
-
-        </div>
+        @endforelse
 
     </div>
 

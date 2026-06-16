@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Review extends Model
 {
     protected $fillable = [
-        'user_id',
-        'movie_id',
-        'rating',
-        'review',
-    ];
+    'user_id',
+    'movie_id',
+    'title',
+    'rating',
+    'review',
+];
 
     public function user(): BelongsTo
     {
