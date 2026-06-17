@@ -13,7 +13,7 @@
         @endif
 
         {{-- Form Review --}}
-        <div class="bg-white p-6 rounded-xl shadow mb-8">
+        <div class="bg-[#0f172a] border-b border-slate-800">
 
             <form action="{{ route('reviews.store') }}" method="POST">
                 @csrf

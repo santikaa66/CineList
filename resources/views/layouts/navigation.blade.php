@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-[#0f172a] text-white">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -86,7 +86,7 @@
             <div class="-me-2 flex items-center sm:hidden">
 
                 <button @click="open = ! open"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
+                        class="inline-flex items-center justify-center p-2 rounded-md bg-[#0f172a] text-white focus:outline-none">
 
                     <svg class="h-6 w-6"
                         stroke="currentColor"
