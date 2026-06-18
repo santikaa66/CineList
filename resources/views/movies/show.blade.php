@@ -47,7 +47,8 @@
                             <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
                             <input type="hidden" name="title" value="{{ $movie['title'] }}">
 
-                            <input type="hidden"
+                            <input
+                                type="hidden"
                                 name="poster"
                                 value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
 
@@ -67,6 +68,7 @@
 
                             <form action="{{ route('reviews.store') }}" method="POST">
 
+
                                 @csrf
 
                                 <input
@@ -78,6 +80,11 @@
                                     type="hidden"
                                     name="title"
                                     value="{{ $movie['title'] }}">
+
+                                <input
+                                    type="hidden"
+                                    name="poster"
+                                    value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
 
                                 <div style="margin-bottom:12px;">
                                     <label style="display:block; margin-bottom:6px; color:#e0e0e0;">

@@ -11,6 +11,7 @@ class Review extends Model
     'user_id',
     'movie_id',
     'title',
+    'poster',
     'rating',
     'review',
 ];

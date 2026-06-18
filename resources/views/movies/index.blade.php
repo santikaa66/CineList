@@ -55,46 +55,7 @@
 
         </div>
 
-        <!-- STATISTIK -->
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-8">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-
-                    <h3 class="text-lg font-bold text-gray-700 dark:text-gray-300">
-                        📌 Watchlist
-                    </h3>
-
-                    <p class="text-5xl font-bold text-indigo-600 mt-4">
-                        {{ $watchlistCount ?? 0 }}
-                    </p>
-
-                    <p class="text-gray-500 mt-2">
-                        Movies saved
-                    </p>
-
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-
-                    <h3 class="text-lg font-bold text-gray-700 dark:text-gray-300">
-                        ⭐ Reviews
-                    </h3>
-
-                    <p class="text-5xl font-bold text-yellow-500 mt-4">
-                        {{ $reviewCount ?? 0 }}
-                    </p>
-
-                    <p class="text-gray-500 mt-2">
-                        Reviews written
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
 
         <!-- TRENDING -->
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-10">

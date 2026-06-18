@@ -29,13 +29,15 @@ class ReviewController extends Controller
             'review' => 'required',
         ]);
 
+
         Review::create([
             'user_id' => auth()->id(),
             'movie_id' => $request->movie_id,
             'title' => $request->title,
+            'poster' => $request->poster,
             'rating' => $request->rating,
             'review' => $request->review,
-        ]);
+]);
 
         return back()->with('success', 'Review berhasil ditambahkan!');
     }

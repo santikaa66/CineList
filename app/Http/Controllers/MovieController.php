@@ -18,23 +18,36 @@ class MovieController extends Controller
     {
         $token = config('services.tmdb.token');
 
-        $response = Http::withoutVerifying()
+        $page1 = Http::withoutVerifying()
             ->withToken($token)
-            ->get('https://api.themoviedb.org/3/trending/movie/day');
-
-        if ($response->failed()) {
-
-            Log::error(
-                'TMDB API Error Index: ' .
-                $response->body()
+            ->get(
+                'https://api.themoviedb.org/3/trending/movie/day',
+                [
+                    'page' => 1
+                ]
             );
+
+        $page2 = Http::withoutVerifying()
+            ->withToken($token)
+            ->get(
+                'https://api.themoviedb.org/3/trending/movie/day',
+                [
+                    'page' => 2
+                ]
+            );
+
+        if ($page1->failed() || $page2->failed()) {
+
+            Log::error('TMDB API Error Index');
 
             $trendingMovies = [];
 
         } else {
 
-            $trendingMovies =
-                $response->json()['results'] ?? [];
+            $trendingMovies = array_merge(
+                $page1->json()['results'] ?? [],
+                $page2->json()['results'] ?? []
+            );
         }
 
         $watchlistCount = Watchlist::where(
@@ -75,7 +88,8 @@ class MovieController extends Controller
                 ->get(
                     'https://api.themoviedb.org/3/search/movie',
                     [
-                        'query' => $query
+                        'query' => $query,
+                        'page' => 1
                     ]
                 );
 
