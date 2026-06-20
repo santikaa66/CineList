@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
+use App\Models\Watchlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-
-use App\Models\Watchlist;
-use App\Models\Review;
 
 class MovieController extends Controller
 {
@@ -16,57 +15,67 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $token = config('services.tmdb.token');
+        $trendingMovies = [];
 
-        $page1 = Http::withoutVerifying()
-            ->withToken($token)
-            ->get(
-                'https://api.themoviedb.org/3/trending/movie/day',
-                [
-                    'page' => 1
-                ]
-            );
+        try {
 
-        $page2 = Http::withoutVerifying()
-            ->withToken($token)
-            ->get(
-                'https://api.themoviedb.org/3/trending/movie/day',
-                [
-                    'page' => 2
-                ]
-            );
+            $token = config('services.tmdb.token');
 
-        if ($page1->failed() || $page2->failed()) {
+            $page1 = Http::withoutVerifying()
+                ->withToken($token)
+                ->get(
+                    'https://api.themoviedb.org/3/trending/movie/day',
+                    ['page' => 1]
+                );
 
-            Log::error('TMDB API Error Index');
+            $page2 = Http::withoutVerifying()
+                ->withToken($token)
+                ->get(
+                    'https://api.themoviedb.org/3/trending/movie/day',
+                    ['page' => 2]
+                );
 
-            $trendingMovies = [];
+            if ($page1->successful() && $page2->successful()) {
 
-        } else {
+                $trendingMovies = array_merge(
+                    $page1->json()['results'] ?? [],
+                    $page2->json()['results'] ?? []
+                );
+            }
 
-            $trendingMovies = array_merge(
-                $page1->json()['results'] ?? [],
-                $page2->json()['results'] ?? []
+        } catch (\Exception $e) {
+
+            Log::error(
+                'TMDB Dashboard Error: ' .
+                $e->getMessage()
             );
         }
 
-        $watchlistCount = Watchlist::where(
+        $watchlists = Watchlist::where(
             'user_id',
             auth()->id()
-        )->count();
+        )
+        ->latest()
+        ->take(10)
+        ->get();
 
-        $reviewCount = Review::where(
+        $latestReviews = Review::where(
             'user_id',
             auth()->id()
-        )->count();
+        )
+        ->latest()
+        ->take(6)
+        ->get();
 
         return view(
             'movies.index',
-            compact(
-                'trendingMovies',
-                'watchlistCount',
-                'reviewCount'
-            )
+            [
+                'trendingMovies' => $trendingMovies,
+                'watchlists' => $watchlists,
+                'latestReviews' => $latestReviews,
+                'watchlistCount' => $watchlists->count(),
+                'reviewCount' => $latestReviews->count(),
+            ]
         );
     }
 
@@ -75,35 +84,35 @@ class MovieController extends Controller
      */
     public function search(Request $request)
     {
-        $query = $request->input('query');
-
+        $query = $request->query('query');
         $searchResult = [];
-
-        $token = config('services.tmdb.token');
 
         if ($query) {
 
-            $response = Http::withoutVerifying()
-                ->withToken($token)
-                ->get(
-                    'https://api.themoviedb.org/3/search/movie',
-                    [
-                        'query' => $query,
-                        'page' => 1
-                    ]
-                );
+            try {
 
-            if ($response->failed()) {
+                $response = Http::withoutVerifying()
+                    ->withToken(config('services.tmdb.token'))
+                    ->get(
+                        'https://api.themoviedb.org/3/search/movie',
+                        [
+                            'query' => $query,
+                            'page' => 1
+                        ]
+                    );
+
+                if ($response->successful()) {
+
+                    $searchResult =
+                        $response->json()['results'] ?? [];
+                }
+
+            } catch (\Exception $e) {
 
                 Log::error(
-                    'TMDB API Error Search: ' .
-                    $response->body()
+                    'TMDB Search Error: ' .
+                    $e->getMessage()
                 );
-
-            } else {
-
-                $searchResult =
-                    $response->json()['results'] ?? [];
             }
         }
 
@@ -121,44 +130,50 @@ class MovieController extends Controller
      */
     public function show($id)
     {
-        $token = config('services.tmdb.token');
+        try {
 
-        $movieResponse = Http::withoutVerifying()
-            ->withToken($token)
-            ->get(
-                "https://api.themoviedb.org/3/movie/{$id}"
+            $token = config('services.tmdb.token');
+
+            $movieResponse = Http::withoutVerifying()
+                ->withToken($token)
+                ->get(
+                    "https://api.themoviedb.org/3/movie/{$id}"
+                );
+
+            $creditsResponse = Http::withoutVerifying()
+                ->withToken($token)
+                ->get(
+                    "https://api.themoviedb.org/3/movie/{$id}/credits"
+                );
+
+            if ($movieResponse->failed()) {
+                abort(404, 'Film tidak ditemukan');
+            }
+
+            $movie = $movieResponse->json();
+
+            $actors = array_slice(
+                $creditsResponse->json()['cast'] ?? [],
+                0,
+                5
             );
 
-        $creditsResponse = Http::withoutVerifying()
-            ->withToken($token)
-            ->get(
-                "https://api.themoviedb.org/3/movie/{$id}/credits"
+            return view(
+                'movies.show',
+                compact(
+                    'movie',
+                    'actors'
+                )
             );
 
-        if ($movieResponse->failed()) {
+        } catch (\Exception $e) {
 
             Log::error(
-                "TMDB API Error Show (ID: {$id}): "
-                . $movieResponse->body()
+                "TMDB Detail Error ({$id}): " .
+                $e->getMessage()
             );
 
             abort(404, 'Film tidak ditemukan');
         }
-
-        $movie = $movieResponse->json();
-
-        $actors = array_slice(
-            $creditsResponse->json()['cast'] ?? [],
-            0,
-            5
-        );
-
-        return view(
-            'movies.show',
-            compact(
-                'movie',
-                'actors'
-            )
-        );
     }
 }
