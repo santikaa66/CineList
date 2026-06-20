@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('title');
             
             // Diubah menjadi poster_path agar match dengan variabel dari API TMDB
-            $table->string('poster_path')->nullable(); 
+            $table->string('poster')->nullable(); 
             
             // Ditambahkan kolom rating agar angka ★ bintangnya tidak hilang
             $table->decimal('vote_average', 3, 1)->nullable(); 

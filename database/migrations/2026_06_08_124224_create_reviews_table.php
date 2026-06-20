@@ -19,6 +19,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->integer('movie_id');
+            
 
             $table->integer('rating');
 
