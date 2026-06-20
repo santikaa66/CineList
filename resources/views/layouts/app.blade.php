@@ -28,9 +28,41 @@
             @endisset
 
             <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+            @if(session('success'))
+                <div
+                    id="toast"
+                    class="fixed top-5 right-5 bg-slate-900/95 backdrop-blur-md border border-green-500 text-white px-5 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3">
+
+                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        ✓
+                    </div>
+
+                    <div>
+                        <p class="font-semibold">Berhasil</p>
+                        <p class="text-sm text-gray-300">
+                            {{ session('success') }}
+                        </p>
+                    </div>
+
+                </div>
+
+                <script>
+                    const toast = document.getElementById('toast');
+
+                    setTimeout(() => {
+                        toast.style.transition = 'all .5s ease';
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateX(100%)';
+
+                        setTimeout(() => toast.remove(), 500);
+                    }, 2500);
+                </script>
+                @endif
+
+                <!-- Page Content -->
+                <main>
+                    {{ $slot }}
+                </main>
         </div>
     </body>
 </html>

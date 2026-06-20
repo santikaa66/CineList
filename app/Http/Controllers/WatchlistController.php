@@ -21,7 +21,7 @@ class WatchlistController extends Controller
     }
 
     public function store(Request $request)
-    {
+{
         Watchlist::create([
             'user_id' => auth()->id(),
             'movie_id' => $request->movie_id,
@@ -29,13 +29,19 @@ class WatchlistController extends Controller
             'poster' => $request->poster,
         ]);
 
-        return back();
+        return back()->with(
+            'success',
+            'Film berhasil ditambahkan ke Watchlist!'
+        );
     }
 
     public function destroy(Watchlist $watchlist)
     {
         $watchlist->delete();
 
-        return back();
+        return back()->with(
+            'success',
+            'Film berhasil dihapus dari Watchlist!'
+        );
     }
 }
