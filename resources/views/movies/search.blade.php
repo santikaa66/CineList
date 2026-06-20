@@ -1,163 +1,83 @@
 <x-app-layout>
-    <main class="container" style="padding: 40px 8%; margin-top: 20px;">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen">
 
-        <div class="search-header" style="margin-bottom: 30px;">
-            <a href="{{ route('dashboard') }}"
-               style="color: #6c5ce7; text-decoration: none; margin-bottom: 10px; display: inline-block; font-weight: 600;">
-
-                <i class="fa-solid fa-arrow-left"></i>
+        <div class="mb-8">
+            <a href="{{ route('dashboard') }}" 
+               class="inline-flex items-center gap-2 bg-slate-800/60 hover:bg-slate-800 text-gray-300 hover:text-white px-4 py-2 rounded-xl text-sm font-medium border border-gray-700/50 shadow-sm transition duration-200 group mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
                 Kembali ke Dashboard
-
             </a>
 
-            <h2 style="font-size: 24px; color: #fff; margin-top: 10px;">
-                Hasil pencarian untuk:
-                <span style="color: #6c5ce7;">
-                    "{{ $query }}"
-                </span>
+            <h2 class="text-2xl font-bold text-white tracking-wide mt-2">
+                Hasil pencarian untuk: 
+                <span class="text-teal-400">"{{ $query }}"</span>
             </h2>
         </div>
 
-        <div class="movie-grid"
-             style="display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                    gap: 30px;">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
 
             @forelse($searchResult ?? [] as $movie)
+                <div class="bg-[#1f2937] rounded-xl shadow-lg overflow-hidden flex flex-col justify-between border border-gray-800 hover:border-gray-700 transition duration-200 group">
 
-                <div class="movie-card"
-                     style="background: #1a1a24;
-                            border-radius: 12px;
-                            overflow: hidden;
-                            display: flex;
-                            flex-direction: column;">
+                    <div class="relative overflow-hidden">
+                        <a href="{{ route('movie.show', $movie['id']) }}" class="block">
+                            @if(!empty($movie['poster_path']))
+                                <img
+                                    src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}"
+                                    alt="{{ $movie['title'] ?? '' }}"
+                                    class="w-full h-80 object-cover transform group-hover:scale-105 transition duration-300">
+                            @else
+                                <div class="w-full h-80 flex flex-col items-center justify-center bg-gray-700 text-gray-400">
+                                    <i class="fa-solid fa-image text-3xl mb-2"></i>
+                                    <span class="text-xs">No Poster</span>
+                                </div>
+                            @endif
+                        </a>
+                        
+                        <span class="absolute top-3 left-3 bg-black/75 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-bold text-yellow-400 flex items-center gap-1 shadow">
+                            ⭐ {{ number_format($movie['vote_average'] ?? 0, 1) }}
+                        </span>
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#1f2937] via-transparent to-transparent pointer-events-none"></div>
+                    </div>
 
-                    <!-- Poster -->
-                    <a href="{{ route('movie.show', $movie['id']) }}"
-                       style="text-decoration: none; color: inherit;">
-
-                        <div class="poster-wrapper"
-                             style="position: relative; height: 320px;">
-
-                            <img
-                                src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}"
-                                alt="{{ $movie['title'] ?? '' }}"
-                                style="width:100%; height:100%; object-fit:cover;">
-
-                            <span
-                                style="position:absolute;
-                                       top:15px;
-                                       left:15px;
-                                       background:rgba(0,0,0,0.75);
-                                       padding:5px 10px;
-                                       border-radius:6px;
-                                       font-size:12px;
-                                       font-weight:700;
-                                       color:#ffcf00;">
-
-                                <i class="fa-solid fa-star"></i>
-                                {{ number_format($movie['vote_average'] ?? 0, 1) }}
-
-                            </span>
-
-                        </div>
-
-                    </a>
-
-                    <!-- Info -->
-                    <div class="movie-info"
-                         style="padding:15px;
-                                display:flex;
-                                flex-direction:column;
-                                flex:1;
-                                justify-content:space-between;">
-
+                    <div class="p-4 pt-2 flex-1 flex flex-col justify-between space-y-4">
                         <div>
-                            <a href="{{ route('movie.show', $movie['id']) }}"
-                               style="text-decoration:none; color:#fff;">
-
-                                <h3 style="font-size:16px;
-                                           margin-bottom:5px;
-                                           white-space:nowrap;
-                                           overflow:hidden;
-                                           text-overflow:ellipsis;">
-
-                                    {{ $movie['title'] ?? '' }}
-
-                                </h3>
-
-                            </a>
-
-                            <p style="color:#a0a0b0;
-                                      font-size:12px;
-                                      margin-bottom:15px;">
-
-                                Release:
-                                {{ $movie['release_date'] ?? 'N/A' }}
-
+                            <h3 class="font-bold text-sm text-white line-clamp-1 group-hover:text-teal-400 transition" title="{{ $movie['title'] ?? '' }}">
+                                {{ $movie['title'] ?? '' }}
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-1">
+                                Release: {{ isset($movie['release_date']) && $movie['release_date'] ? date('Y', strtotime($movie['release_date'])) : 'N/A' }}
                             </p>
                         </div>
 
-                        <!-- Add Watchlist -->
-                        <form action="{{ route('watchlist.store') }}"
-                              method="POST">
-
+                        <form action="{{ route('watchlist.store') }}" method="POST" class="m-0">
                             @csrf
-
-                            <input
-                                type="hidden"
-                                name="movie_id"
-                                value="{{ $movie['id'] }}">
-
-                            <input
-                                type="hidden"
-                                name="title"
-                                value="{{ $movie['title'] }}">
-
-                            <input
-                                type="hidden"
-                                name="poster"
-                                value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
+                            <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                            <input type="hidden" name="title" value="{{ $movie['title'] ?? '' }}">
+                            <input type="hidden" name="poster" value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
 
                             <button
                                 type="submit"
-                                style="background:#6c5ce7;
-                                        color:white;
-                                        border:none;
-                                        padding:10px;
-                                        border-radius:8px;
-                                        cursor:pointer;
-                                        font-weight:600;
-                                        font-size:13px;
-                                        width:100%;">
-
-                                <i class="fa-solid fa-plus"></i>
-                                Add to Watchlist
-
+                                class="w-full bg-teal-600 hover:bg-teal-500 text-white py-2 rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+                                <span>➕ Watchlist</span>
                             </button>
-
                         </form>
-
                     </div>
 
                 </div>
-
             @empty
-
-                <div class="no-results"
-                    style="grid-column:1/-1;
-                            text-align:center;
-                            padding:50px 0;">
-
-                    <p style="color:#a0a0b0; font-size:16px;">
-                        Ups! Film yang kamu cari tidak ditemukan.
-                    </p>
-
+                <div class="col-span-full">
+                    <div class="bg-[#1f2937] rounded-xl shadow p-12 text-center border border-gray-800">
+                        <p class="text-gray-400 text-sm">
+                            Ups! Film yang kamu cari tidak ditemukan. Silakan coba kata kunci lain.
+                        </p>
+                    </div>
                 </div>
-
             @endforelse
 
         </div>
-
     </main>
 </x-app-layout>

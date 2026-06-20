@@ -1,141 +1,115 @@
 <x-app-layout>
-    <main class="container" style="padding: 40px 8%; margin-top: 20px;">
-        <a href="javascript:history.back()" style="color: #a0a0b0; text-decoration: none; display: inline-block; margin-bottom: 20px; font-weight: 600;">
-            <i class="fa-solid fa-arrow-left"></i> Kembali
-        </a>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-screen">
+        
+        <div class="mb-8">
+            <a href="javascript:history.back()" 
+               class="inline-flex items-center gap-2 bg-slate-800/60 hover:bg-slate-800 text-gray-300 hover:text-white px-4 py-2 rounded-xl text-sm font-medium border border-gray-700/50 shadow-sm transition duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali
+            </a>
+        </div>
 
         @if(isset($movie))
-            <div class="movie-detail-wrapper" style="display: flex; gap: 40px; flex-wrap: wrap;">
+            <div class="flex flex-col lg:flex-row gap-10 items-start">
                 
-                <div class="detail-poster" style="flex: 1; min-width: 280px; max-width: 350px;">
-                    <img src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}" alt="{{ $movie['title'] ?? '' }}" style="width: 100%; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <div class="w-full sm:w-80 shrink-0 mx-auto lg:mx-0">
+                    <img src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}" 
+                         alt="{{ $movie['title'] ?? '' }}" 
+                         class="w-full rounded-2xl shadow-2xl border border-gray-800/80 object-cover">
                 </div>
 
-                <div class="detail-info" style="flex: 2; min-width: 300px; color: #fff;">
-                    <h1 style="font-size: 38px; margin-bottom: 10px; font-weight: 800; line-height: 1.2;">{{ $movie['title'] ?? '' }}</h1>
+                <div class="flex-1 space-y-6 text-white w-full">
                     
-                    <div class="meta-items" style="display: flex; gap: 15px; margin-bottom: 20px; color: #a0a0b0; font-size: 14px;">
-                        <span><i class="fa-solid fa-star" style="color: #ffcf00;"></i> {{ number_format($movie['vote_average'] ?? 0, 1) }} / 10</span>
-                        <span>•</span>
-                        <span>{{ $movie['release_date'] ?? 'N/A' }}</span>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                            {{ $movie['title'] ?? '' }}
+                        </h1>
+                        <div class="flex items-center gap-3 mt-3 text-sm text-gray-400 font-medium">
+                            <span class="text-yellow-400 flex items-center gap-1">
+                                <i class="fa-solid fa-star"></i> {{ number_format($movie['vote_average'] ?? 0, 1) }} / 10
+                            </span>
+                            <span>•</span>
+                            <span>{{ $movie['release_date'] ?? 'N/A' }}</span>
+                        </div>
                     </div>
 
-                    <div class="overview" style="margin-bottom: 30px;">
-                        <h3 style="margin-bottom: 10px; color: #6c5ce7; font-size: 18px; font-weight: 700;">Sinopsis</h3>
-                        <p style="line-height: 1.6; color: #e0e0e0; font-size: 15px;">
+                    <div class="space-y-2">
+                        <h3 class="text-teal-400 font-bold text-sm tracking-wide uppercase">Sinopsis</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed max-w-3xl">
                             {{ $movie['overview'] ?? 'Sinopsis tidak tersedia.' }}
                         </p>
                     </div>
 
-                    <div class="actors-section" style="margin-bottom: 30px;">
-                        <h3 style="margin-bottom: 12px; color: #6c5ce7; font-size: 18px; font-weight: 700;">Pemain Utama</h3>
-                        <div class="actors-list" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="space-y-3">
+                        <h3 class="text-teal-400 font-bold text-sm tracking-wide uppercase">Pemain Utama</h3>
+                        <div class="flex flex-wrap gap-2">
                             @forelse($actors ?? [] as $actor)
-                                <div class="actor-card" style="background: #1a1a24; padding: 8px 15px; border-radius: 20px; border: 1px solid #333; font-size: 14px;">
-                                    <i class="fa-solid fa-user" style="color: #a0a0b0; margin-right: 5px;"></i> {{ $actor['name'] }}
+                                <div class="bg-slate-800/50 text-gray-300 px-4 py-1.5 rounded-full text-xs font-medium border border-gray-700/60 shadow-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-user text-gray-400"></i> {{ $actor['name'] }}
                                 </div>
                             @empty
-                                <p style="color: #a0a0b0; font-size: 14px;">Data pemain tidak tersedia.</p>
+                                <p class="text-gray-400 text-xs italic">Data pemain tidak tersedia.</p>
                             @endforelse
                         </div>
                     </div>
 
-                    <div class="action-buttons" style="display: flex; gap: 15px; max-width: 300px;">
+                    <div class="pt-2 max-w-xs">
                         <form action="{{ route('watchlist.store') }}" method="POST">
                             @csrf
-
                             <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
                             <input type="hidden" name="title" value="{{ $movie['title'] }}">
+                            <input type="hidden" name="poster" value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
 
-                            <input
-                                type="hidden"
-                                name="poster"
-                                value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
-
-                            <button
-                                type="submit"
-                                style="background:#6c5ce7;color:white;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:600;width:100%;">
-                                <i class="fa-solid fa-plus"></i>
-                                Add to Watchlist
+                            <button type="submit" class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Add to Watchlist
                             </button>
                         </form>
-
-                        <div style="margin-top:30px; width:100%; max-width:500px;">
-
-                            <h3 style="margin-bottom:12px; color:#f59e0b; font-size:18px; font-weight:700;">
-                                ⭐ Tulis Review
-                            </h3>
-
-                            <form action="{{ route('reviews.store') }}" method="POST">
-
-
-                                @csrf
-
-                                <input
-                                    type="hidden"
-                                    name="movie_id"
-                                    value="{{ $movie['id'] }}">
-
-                                <input
-                                    type="hidden"
-                                    name="title"
-                                    value="{{ $movie['title'] }}">
-
-                                <input
-                                    type="hidden"
-                                    name="poster"
-                                    value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
-
-                                <div style="margin-bottom:12px;">
-                                    <label style="display:block; margin-bottom:6px; color:#e0e0e0;">
-                                        Rating
-                                    </label>
-
-                                    <select
-                                        name="rating"
-                                        required
-                                        style="width:100%; padding:10px; border-radius:8px; color:black;">
-
-                                        <option value="1">⭐ 1</option>
-                                        <option value="2">⭐⭐ 2</option>
-                                        <option value="3">⭐⭐⭐ 3</option>
-                                        <option value="4">⭐⭐⭐⭐ 4</option>
-                                        <option value="5">⭐⭐⭐⭐⭐ 5</option>
-
-                                    </select>
-                                </div>
-
-                                <div style="margin-bottom:12px;">
-                                    <label style="display:block; margin-bottom:6px; color:#e0e0e0;">
-                                        Review
-                                    </label>
-
-                                    <textarea
-                                        name="review"
-                                        rows="4"
-                                        required
-                                        placeholder="Tulis pendapatmu tentang film ini..."
-                                        style="width:100%; padding:10px; border-radius:8px; color:black;"></textarea>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    style="background:#f59e0b; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; width:100%;">
-
-                                    ⭐ Simpan Review
-
-                                </button>
-
-                            </form>
-
-                        </div>
-
                     </div>
-                </div>
 
+                    <hr class="border-gray-800/80 my-6">
+
+                    <div class="bg-slate-900/40 border border-gray-800/80 rounded-2xl p-6 max-w-xl shadow-inner">
+                        <h3 class="text-amber-500 font-bold text-base flex items-center gap-2 mb-4">
+                            ⭐ Tulis Review
+                        </h3>
+
+                        <form action="{{ route('reviews.store') }}" method="POST" class="space-y-4">
+                            @csrf
+                            <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                            <input type="hidden" name="title" value="{{ $movie['title'] }}">
+                            <input type="hidden" name="poster" value="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}">
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Rating Anda</label>
+                                <select name="rating" required class="w-full bg-slate-800 text-white border border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-amber-500 transition">
+                                    <option value="5">⭐⭐⭐⭐⭐ 5 (Sangat Bagus)</option>
+                                    <option value="4">⭐⭐⭐⭐ 4 (Bagus)</option>
+                                    <option value="3">⭐⭐⭐ 3 (Cukup)</option>
+                                    <option value="2">⭐⭐ 2 (Buruk)</option>
+                                    <option value="1">⭐ 1 (Sangat Buruk)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Ulasan / Pendapat</label>
+                                <textarea name="review" rows="3" required placeholder="Tulis pendapatmu tentang film ini..." 
+                                          class="w-full bg-slate-800 text-white border border-gray-700 rounded-xl p-3 text-sm placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm py-2.5 rounded-xl shadow transition duration-200">
+                                Simpan Review
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
             </div>
         @else
-            <p style="color: #a0a0b0;">Data film tidak ditemukan.</p>
+            <div class="bg-slate-900/60 border border-gray-800 rounded-2xl p-12 text-center">
+                <p class="text-gray-400 text-sm">Data film tidak ditemukan.</p>
+            </div>
         @endif
     </main>
 </x-app-layout>
