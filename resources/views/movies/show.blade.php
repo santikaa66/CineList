@@ -3,7 +3,7 @@
         
         <div class="mb-8">
             <a href="javascript:history.back()" 
-               class="inline-flex items-center gap-2 bg-slate-800/60 hover:bg-slate-800 text-gray-300 hover:text-white px-4 py-2 rounded-xl text-sm font-medium border border-gray-700/50 shadow-sm transition duration-200 group">
+                class="inline-flex items-center gap-2 bg-slate-800/60 hover:bg-slate-800 text-gray-300 hover:text-white px-4 py-2 rounded-xl text-sm font-medium border border-gray-700/50 shadow-sm transition duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -16,8 +16,8 @@
                 
                 <div class="w-full sm:w-80 shrink-0 mx-auto lg:mx-0">
                     <img src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] ?? '' }}" 
-                         alt="{{ $movie['title'] ?? '' }}" 
-                         class="w-full rounded-2xl shadow-2xl border border-gray-800/80 object-cover">
+                        alt="{{ $movie['title'] ?? '' }}" 
+                        class="w-full rounded-2xl shadow-2xl border border-gray-800/80 object-cover">
                 </div>
 
                 <div class="flex-1 space-y-6 text-white w-full">
@@ -53,6 +53,63 @@
                                 <p class="text-gray-400 text-xs italic">Data pemain tidak tersedia.</p>
                             @endforelse
                         </div>
+                    </div>
+
+                    @if(isset($trailer))
+
+                    <div class="space-y-3">
+
+                        <h3 class="text-red-500 font-bold text-sm tracking-wide uppercase">
+                            🎬 Official Trailer
+                        </h3>
+
+                        <div class="aspect-video rounded-2xl overflow-hidden border border-gray-800 shadow-lg">
+
+                            <iframe
+                                class="w-full h-full"
+                                src="https://www.youtube.com/embed/{{ $trailer['key'] }}"
+                                title="Movie Trailer"
+                                allowfullscreen>
+                            </iframe>
+
+                        </div>
+
+                    </div>
+
+                    @endif
+
+                    <div class="bg-slate-900 border border-gray-800 rounded-2xl p-5">
+
+                        <h3 class="text-purple-400 font-bold mb-4">
+                            📄 Movie Info
+                        </h3>
+
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+
+                            <div>
+                                <p class="text-gray-500">Status</p>
+                                <p>{{ $movie['status'] ?? '-' }}</p>
+                            </div>
+
+                            <div>
+                                <p class="text-gray-500">Language</p>
+                                <p>{{ strtoupper($movie['original_language'] ?? '-') }}</p>
+                            </div>
+
+                            <div>
+                                <p class="text-gray-500">Runtime</p>
+                                <p>{{ $movie['runtime'] ?? '-' }} min</p>
+                            </div>
+
+                            <div>
+                                <p class="text-gray-500">Rating</p>
+                                <p class="text-yellow-400">
+                                    ⭐ {{ number_format($movie['vote_average'] ?? 0, 1) }}
+                                </p>
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div class="pt-2 max-w-xs">
@@ -95,7 +152,7 @@
                             <div>
                                 <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Ulasan / Pendapat</label>
                                 <textarea name="review" rows="3" required placeholder="Tulis pendapatmu tentang film ini..." 
-                                          class="w-full bg-slate-800 text-white border border-gray-700 rounded-xl p-3 text-sm placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"></textarea>
+                                        class="w-full bg-slate-800 text-white border border-gray-700 rounded-xl p-3 text-sm placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"></textarea>
                             </div>
 
                             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm py-2.5 rounded-xl shadow transition duration-200">

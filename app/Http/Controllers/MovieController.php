@@ -140,6 +140,12 @@ class MovieController extends Controller
                     "https://api.themoviedb.org/3/movie/{$id}"
                 );
 
+            $videoResponse = Http::withoutVerifying()
+                ->withToken($token)
+                ->get(
+                    "https://api.themoviedb.org/3/movie/{$id}/videos"
+                );
+
             $creditsResponse = Http::withoutVerifying()
                 ->withToken($token)
                 ->get(
@@ -152,6 +158,10 @@ class MovieController extends Controller
 
             $movie = $movieResponse->json();
 
+            $trailer = collect(
+                $videoResponse->json()['results'] ?? []
+            )->firstWhere('type', 'Trailer');
+
             $actors = array_slice(
                 $creditsResponse->json()['cast'] ?? [],
                 0,
@@ -162,7 +172,8 @@ class MovieController extends Controller
                 'movies.show',
                 compact(
                     'movie',
-                    'actors'
+                    'actors',
+                    'trailer'
                 )
             );
 
