@@ -163,6 +163,65 @@
 
                 </div>
             </div>
+
+                        <div class="mt-10">
+
+                            <h2 class="text-2xl font-bold mb-6">
+                                ⭐ Ulasan Pengguna CineList
+                            </h2>
+
+                            @forelse($reviews as $review)
+
+                                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 mb-4">
+
+                                    <div class="flex justify-between items-center mb-3">
+
+                                        <div>
+
+                                            <h3 class="font-semibold">
+                                                {{ $review->user->name }}
+                                            </h3>
+
+                                            <p class="text-xs text-gray-400">
+                                                {{ $review->created_at->diffForHumans() }}
+                                            </p>
+
+                                        </div>
+
+                                        <div class="text-yellow-400">
+
+                                            @for($i = 1; $i <= 5; $i++)
+
+                                                @if($i <= $review->rating)
+                                                    ⭐
+                                                @else
+                                                    ☆
+                                                @endif
+
+                                            @endfor
+
+                                        </div>
+
+                                    </div>
+
+                                    <p class="text-gray-300">
+                                        {{ $review->review }}
+                                    </p>
+
+                                </div>
+
+                            @empty
+
+                                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-gray-400">
+
+                                    Belum ada review untuk film ini.
+
+                                </div>
+
+                            @endforelse
+
+                        </div>
+
         @else
             <div class="bg-slate-900/60 border border-gray-800 rounded-2xl p-12 text-center">
                 <p class="text-gray-400 text-sm">Data film tidak ditemukan.</p>

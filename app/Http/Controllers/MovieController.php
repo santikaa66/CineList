@@ -129,62 +129,69 @@ class MovieController extends Controller
      * Detail Movie
      */
     public function show($id)
-    {
-        try {
+{
+            try {
 
-            $token = config('services.tmdb.token');
+                $token = config('services.tmdb.token');
 
-            $movieResponse = Http::withoutVerifying()
-                ->withToken($token)
-                ->get(
-                    "https://api.themoviedb.org/3/movie/{$id}"
+                $movieResponse = Http::withoutVerifying()
+                    ->withToken($token)
+                    ->get(
+                        "https://api.themoviedb.org/3/movie/{$id}"
+                    );
+
+                $videoResponse = Http::withoutVerifying()
+                    ->withToken($token)
+                    ->get(
+                        "https://api.themoviedb.org/3/movie/{$id}/videos"
+                    );
+
+                $creditsResponse = Http::withoutVerifying()
+                    ->withToken($token)
+                    ->get(
+                        "https://api.themoviedb.org/3/movie/{$id}/credits"
+                    );
+
+                if ($movieResponse->failed()) {
+                    abort(404, 'Film tidak ditemukan');
+                }
+
+                $movie = $movieResponse->json();
+
+                $trailer = collect(
+                    $videoResponse->json()['results'] ?? []
+                )->firstWhere('type', 'Trailer');
+
+                $actors = array_slice(
+                    $creditsResponse->json()['cast'] ?? [],
+                    0,
+                    5
                 );
 
-            $videoResponse = Http::withoutVerifying()
-                ->withToken($token)
-                ->get(
-                    "https://api.themoviedb.org/3/movie/{$id}/videos"
+                // Review dari user CineList
+                $reviews = Review::with('user')
+                    ->where('movie_id', $id)
+                    ->latest()
+                    ->get();
+
+                return view(
+                    'movies.show',
+                    compact(
+                        'movie',
+                        'actors',
+                        'trailer',
+                        'reviews'
+                    )
                 );
 
-            $creditsResponse = Http::withoutVerifying()
-                ->withToken($token)
-                ->get(
-                    "https://api.themoviedb.org/3/movie/{$id}/credits"
+            } catch (\Exception $e) {
+
+                Log::error(
+                    "TMDB Detail Error ({$id}): " .
+                    $e->getMessage()
                 );
 
-            if ($movieResponse->failed()) {
                 abort(404, 'Film tidak ditemukan');
             }
-
-            $movie = $movieResponse->json();
-
-            $trailer = collect(
-                $videoResponse->json()['results'] ?? []
-            )->firstWhere('type', 'Trailer');
-
-            $actors = array_slice(
-                $creditsResponse->json()['cast'] ?? [],
-                0,
-                5
-            );
-
-            return view(
-                'movies.show',
-                compact(
-                    'movie',
-                    'actors',
-                    'trailer'
-                )
-            );
-
-        } catch (\Exception $e) {
-
-            Log::error(
-                "TMDB Detail Error ({$id}): " .
-                $e->getMessage()
-            );
-
-            abort(404, 'Film tidak ditemukan');
         }
-    }
 }

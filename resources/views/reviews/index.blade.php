@@ -25,18 +25,40 @@
 
                     <div class="flex-1">
 
-                        <h2 class="text-xl font-bold text-white">
+                        <h2 class="font-bold text-xl text-white">
                             🎬 {{ $item->title }}
                         </h2>
 
-                        <p class="text-yellow-400 mt-2">
-                            ⭐ {{ $item->rating }}/5
-                        </p>
+                        <div class="flex items-center justify-between mt-2">
+
+                            <p class="text-gray-400 text-sm">
+                                👤 {{ $item->user->name }}
+                            </p>
+
+                            <p class="text-gray-500 text-xs">
+                                {{ $item->created_at->format('d M Y') }}
+                            </p>
+
+                        </div>
+
+                        <div class="mt-3 text-yellow-400 text-lg">
+
+                            @for($i = 1; $i <= 5; $i++)
+
+                                @if($i <= $item->rating)
+                                    ⭐
+                                @else
+                                    ☆
+                                @endif
+
+                            @endfor
+
+                        </div>
 
                         <p class="text-gray-300 mt-3">
                             {{ $item->review }}
                         </p>
-
+                        
                         <form
                             action="{{ route('reviews.destroy', $item->id) }}"
                             method="POST"
