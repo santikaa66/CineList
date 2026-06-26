@@ -48,4 +48,36 @@ class ReviewController extends Controller
 
         return back()->with('success', 'Review berhasil dihapus!');
     }
+
+    public function edit(Review $review)
+{
+    // Pastikan hanya pemilik review yang bisa mengedit
+    if ($review->user_id != auth()->id()) {
+        abort(403);
+    }
+
+    return view('reviews.edit', compact('review'));
+}
+
+    public function update(Request $request, Review $review)
+    {
+        // Pastikan hanya pemilik review yang bisa mengedit
+        if ($review->user_id != auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'required|string|max:1000',
+        ]);
+
+        $review->update([
+            'rating' => $request->rating,
+            'review' => $request->review,
+        ]);
+
+        return redirect()
+            ->route('reviews.index')
+            ->with('success', 'Review berhasil diperbarui.');
+    }
 }

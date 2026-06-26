@@ -1,77 +1,141 @@
 <x-app-layout>
 
-    <div class="max-w-5xl mx-auto py-8">
+<div class="max-w-6xl mx-auto px-6 py-10">
 
-        <h1 class="text-3xl font-bold text-white mb-6">
+    {{-- Header --}}
+    <div class="mb-8">
+
+        <h1 class="text-4xl font-bold text-white">
             ⭐ My Reviews
         </h1>
 
-        @if(session('success'))
-            <div class="bg-green-500 text-white p-3 rounded-lg mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
+        <p class="text-gray-400 mt-2">
+            Semua review film yang pernah kamu tulis.
+        </p>
 
-        @forelse($reviews as $item)
+    </div>
 
-            <div class="bg-slate-900 rounded-xl p-5 mb-4 border border-slate-800">
+    {{-- Alert --}}
+    @if(session('success'))
 
-                <div class="flex gap-4">
+        <div class="bg-green-600 text-white px-5 py-3 rounded-xl mb-6">
+
+            {{ session('success') }}
+
+        </div>
+
+    @endif
+
+    {{-- Review List --}}
+    @forelse($reviews as $item)
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 hover:border-purple-500 transition">
+
+            <div class="flex flex-col md:flex-row gap-6">
+
+                {{-- Poster --}}
+                <div class="shrink-0">
 
                     <img
                         src="{{ $item->poster }}"
                         alt="{{ $item->title }}"
-                        class="w-24 h-36 object-cover rounded-lg">
+                        class="w-36 h-52 object-cover rounded-xl shadow-lg">
 
-                    <div class="flex-1">
+                </div>
 
-                        <h2 class="font-bold text-xl text-white">
-                            🎬 {{ $item->title }}
-                        </h2>
+                {{-- Content --}}
+                <div class="flex-1 flex flex-col">
 
-                        <div class="flex items-center justify-between mt-2">
+                    {{-- Judul --}}
+                    <h2 class="text-2xl font-bold text-white">
 
-                            <p class="text-gray-400 text-sm">
-                                👤 {{ $item->user->name }}
-                            </p>
+                        🎬 {{ $item->title }}
 
-                            <p class="text-gray-500 text-xs">
-                                {{ $item->created_at->format('d M Y') }}
-                            </p>
+                    </h2>
 
-                        </div>
+                    {{-- Rating --}}
+                    <div class="flex items-center gap-1 mt-3">
 
-                        <div class="mt-3 text-yellow-400 text-lg">
+                        @for($i = 1; $i <= 5; $i++)
 
-                            @for($i = 1; $i <= 5; $i++)
+                            @if($i <= $item->rating)
 
-                                @if($i <= $item->rating)
-                                    ⭐
-                                @else
-                                    ☆
-                                @endif
+                                <span class="text-yellow-400 text-xl">
+                                    ★
+                                </span>
 
-                            @endfor
+                            @else
 
-                        </div>
+                                <span class="text-gray-600 text-xl">
+                                    ★
+                                </span>
 
-                        <p class="text-gray-300 mt-3">
+                            @endif
+
+                        @endfor
+
+                        <span class="text-gray-400 text-sm ml-2">
+
+                            {{ $item->rating }}/5
+
+                        </span>
+
+                    </div>
+
+                    {{-- User --}}
+                    <p class="text-gray-400 mt-3">
+
+                        👤 Oleh :
+                        <span class="text-white font-medium">
+
+                            {{ $item->user->name }}
+
+                        </span>
+
+                    </p>
+
+                    {{-- Tanggal --}}
+                    <p class="text-gray-500 text-sm mt-1">
+
+                        {{ $item->created_at->format('d F Y') }}
+
+                    </p>
+
+                    {{-- Review --}}
+                    <div class="mt-5">
+
+                        <p class="text-gray-300 leading-7">
+
                             {{ $item->review }}
+
                         </p>
-                        
+
+                    </div>
+
+                    {{-- Button --}}
+                    <div class="flex gap-3 mt-6">
+
+                        <a
+                            href="{{ route('reviews.edit', $item->id) }}"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition">
+
+                            ✏ Edit
+
+                        </a>
+
                         <form
                             action="{{ route('reviews.destroy', $item->id) }}"
-                            method="POST"
-                            class="mt-4">
+                            method="POST">
 
                             @csrf
                             @method('DELETE')
 
                             <button
                                 type="submit"
-                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
+                                onclick="return confirm('Yakin ingin menghapus review ini?')"
+                                class="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-white transition">
 
-                                Hapus Review
+                                🗑 Hapus
 
                             </button>
 
@@ -83,14 +147,32 @@
 
             </div>
 
-        @empty
+        </div>
 
-            <div class="bg-slate-900 rounded-xl p-6 text-center text-gray-400">
-                Belum ada review.
+    @empty
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl py-14 text-center">
+
+            <div class="text-6xl mb-4">
+                🎬
             </div>
 
-        @endforelse
+            <h2 class="text-2xl font-semibold text-white">
 
-    </div>
+                Belum Ada Review
+
+            </h2>
+
+            <p class="text-gray-400 mt-2">
+
+                Yuk mulai review film favoritmu!
+
+            </p>
+
+        </div>
+
+    @endforelse
+
+</div>
 
 </x-app-layout>
