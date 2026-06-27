@@ -173,6 +173,11 @@ class MovieController extends Controller
                     ->where('movie_id', $id)
                     ->latest()
                     ->get();
+                    
+                // Cek apakah film ini sudah ada di watchlist user yang sedang login
+                $isInWatchlist = auth()->user()
+                    ? \App\Models\Watchlist::where('user_id', auth()->id())->where('movie_id', $id)->exists()
+                    : false;
 
                 return view(
                     'movies.show',
