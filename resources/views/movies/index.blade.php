@@ -9,45 +9,41 @@ use Illuminate\Support\Str;
     {{-- HERO SECTION --}}
     @if(count($trendingMovies))
 
-    <div class="relative rounded-3xl overflow-hidden h-[450px] mb-10 border border-slate-800">
 
-        <img
-            src="https://image.tmdb.org/t/p/original{{ $trendingMovies[0]['backdrop_path'] }}"
-            class="absolute inset-0 w-full h-full object-cover">
+<div class="relative rounded-3xl overflow-hidden h-[520px] md:h-[450px] mb-10 border border-slate-800">
 
-        <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+    <img
+        src="https://image.tmdb.org/t/p/original{{ $trendingMovies[0]['backdrop_path'] }}"
+        alt="{{ $trendingMovies[0]['title'] }}"
+        class="absolute inset-0 w-full h-full object-cover">
 
-        <div class="relative z-10 h-full flex items-center">
+    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
 
-            <div class="px-10 max-w-2xl">
+    <div class="relative z-10 h-full flex items-end md:items-center">
 
-                <h1 class="text-5xl md:text-6xl font-bold leading-tight">
-                    {{ $trendingMovies[0]['title'] }}
-                </h1>
+        <div class="px-6 md:px-10 pb-8 md:pb-0 max-w-2xl">
 
-                <p class="mt-5 text-gray-300 text-lg">
-                    {{ Str::limit($trendingMovies[0]['overview'], 180) }}
-                </p>
+            <h1 class="text-3xl md:text-6xl font-bold leading-tight">
+                {{ $trendingMovies[0]['title'] }}
+            </h1>
 
-                <div class="flex gap-4 mt-8">
+            <p class="mt-4 text-sm md:text-lg text-gray-300">
+                {{ Str::limit($trendingMovies[0]['overview'], 180) }}
+            </p>
 
-                    <a
-                        href="#movies"
-                        class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl font-semibold transition">
+            <div class="flex flex-col sm:flex-row gap-3 mt-6">
 
-                        Browse Movies
+                <a
+                    href="#movies"
+                    class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl font-semibold transition text-center">
+                    Browse Movies
+                </a>
 
-                    </a>
-
-                    <a
-                        href="{{ route('watchlist.index') }}"
-                        class="bg-slate-800 hover:bg-slate-700 px-6 py-3 rounded-xl font-semibold transition">
-
-                        My Watchlist
-
-                    </a>
-
-                </div>
+                <a
+                    href="{{ route('watchlist.index') }}"
+                    class="bg-slate-800 hover:bg-slate-700 px-6 py-3 rounded-xl font-semibold transition text-center">
+                    My Watchlist
+                </a>
 
             </div>
 
@@ -55,7 +51,9 @@ use Illuminate\Support\Str;
 
     </div>
 
-    @endif
+</div>
+
+@endif
 
     {{-- SEARCH --}}
     <div class="mb-10">
@@ -63,7 +61,7 @@ use Illuminate\Support\Str;
         <form
             action="{{ route('movie.search') }}"
             method="GET"
-            class="flex gap-3">
+            class="flex flex-col sm:flex-row gap-3">
 
             <input
                 type="text"
@@ -73,7 +71,7 @@ use Illuminate\Support\Str;
 
             <button
                 type="submit"
-                class="bg-purple-600 hover:bg-purple-700 px-6 rounded-xl font-semibold">
+                class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-xl font-semibold w-full sm:w-auto">
 
                 Search
 
@@ -106,7 +104,7 @@ use Illuminate\Support\Str;
                         <img
                             src="https://image.tmdb.org/t/p/w500{{ $movie['poster_path'] }}"
                             alt="{{ $movie['title'] }}"
-                            class="w-full h-80 object-cover">
+                            class="w-full h-64 sm:h-80 object-cover">
 
                     </a>
 
@@ -199,7 +197,7 @@ use Illuminate\Support\Str;
                     <img
                         src="{{ $item->poster }}"
                         alt="{{ $item->title }}"
-                        class="w-full h-64 object-cover">
+                        class="w-full h-56 sm:h-64 object-cover">
 
                     <div class="p-3">
 
