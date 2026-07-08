@@ -64,5 +64,8 @@
                     {{ $slot }}
                 </main>
         </div>
+        <footer class="border-t border-slate-800 mt-16 py-6 text-center text-gray-400 text-sm">
+            © 2026 CineList • Powered by Laravel & TMDB API
+        </footer>
     </body>
 </html>

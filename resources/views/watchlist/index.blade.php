@@ -79,14 +79,14 @@
                         <form
                             action="{{ route('watchlist.destroy', $movie->id) }}"
                             method="POST"
-                            class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition duration-300">
+                            class="absolute top-3 right-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition duration-300">
 
                             @csrf
                             @method('DELETE')
 
                             <button
                                 type="submit"
-                                onclick="event.stopPropagation();"
+                                onclick="return confirm('Yakin ingin menghapus film ini dari watchlist?')"
                                 class="w-10 h-10 rounded-full bg-red-600 hover:bg-red-500 text-white shadow-lg flex items-center justify-center transition">
 
                                 🗑️

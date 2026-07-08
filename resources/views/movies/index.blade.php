@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
     @if(count($trendingMovies))
 
 
-<div class="relative rounded-3xl overflow-hidden h-[520px] md:h-[450px] mb-10 border border-slate-800">
+<div class="relative rounded-3xl overflow-hidden h-[320px] md:h-[450px] mb-10 border border-slate-800">
 
     <img
         src="https://image.tmdb.org/t/p/original{{ $trendingMovies[0]['backdrop_path'] }}"
@@ -23,11 +23,11 @@ use Illuminate\Support\Str;
 
         <div class="px-6 md:px-10 pb-8 md:pb-0 max-w-2xl">
 
-            <h1 class="text-3xl md:text-6xl font-bold leading-tight">
+            <h1 class="text-2xl md:text-6xl font-bold" leading-tight">
                 {{ $trendingMovies[0]['title'] }}
             </h1>
 
-            <p class="mt-4 text-sm md:text-lg text-gray-300">
+            <p class="hidden md:block mt-4 text-lg">
                 {{ Str::limit($trendingMovies[0]['overview'], 180) }}
             </p>
 

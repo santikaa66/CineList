@@ -15,13 +15,13 @@
 
     @forelse($reviews as $item)
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 hover:border-purple-500 transition">
+        <div class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 hover:border-purple-500 hover:-translate-y-1 transition duration-300">
 
             <div class="flex flex-col md:flex-row gap-6">
 
                 <img
                     src="{{ $item->poster }}"
-                    class="w-36 h-52 object-cover rounded-xl shadow-lg"
+                    class="w-36 h-52 object-cover rounded-xl shadow-lg transition duration-300 group-hover:scale-105"
                 >
 
                 <div class="flex-1">
@@ -45,9 +45,9 @@
                         👤 {{ $item->user->name }}
                     </p>
 
-                    <p class="text-gray-500 text-sm mt-1">
-                        {{ $item->created_at->format('d F Y') }}
-                    </p>
+                    <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
+                        📅 {{ $item->created_at->format('d F Y') }}
+                    </>
 
                     <p class="text-gray-300 mt-4 leading-7">
                         {{ $item->review }}
@@ -55,19 +55,28 @@
 
                     <div class="flex gap-3 mt-6">
 
-                        <a href="{{ route('reviews.edit', $item->id) }}"
-                           class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
-                            ✏ Edit
+                        <a
+                            href="{{ route('reviews.edit', $item->id) }}"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition">
+
+                            ✏️ Edit
+
                         </a>
 
-                        <form action="{{ route('reviews.destroy', $item->id) }}" method="POST">
+                        <form
+                            action="{{ route('reviews.destroy', $item->id) }}"
+                            method="POST">
+
                             @csrf
                             @method('DELETE')
 
                             <button
-                                class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg"
-                            >
-                                🗑 Hapus
+                                type="submit"
+                                onclick="return confirm('Yakin ingin menghapus review ini?')"
+                                class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold transition">
+
+                                🗑️ Hapus
+
                             </button>
 
                         </form>

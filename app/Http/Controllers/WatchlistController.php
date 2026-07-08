@@ -22,18 +22,29 @@ class WatchlistController extends Controller
 
     public function store(Request $request)
 {
-        Watchlist::create([
-            'user_id' => auth()->id(),
-            'movie_id' => $request->movie_id,
-            'title' => $request->title,
-            'poster' => $request->poster,
-        ]);
+    $exists = Watchlist::where('user_id', auth()->id())
+        ->where('movie_id', $request->movie_id)
+        ->exists();
 
+    if ($exists) {
         return back()->with(
             'success',
-            'Film berhasil ditambahkan ke Watchlist!'
+            'Film sudah ada di Watchlist!'
         );
     }
+
+    Watchlist::create([
+        'user_id' => auth()->id(),
+        'movie_id' => $request->movie_id,
+        'title' => $request->title,
+        'poster' => $request->poster,
+    ]);
+
+    return back()->with(
+        'success',
+        'Film berhasil ditambahkan ke Watchlist!'
+    );
+}
 
     public function destroy(Watchlist $watchlist)
     {
