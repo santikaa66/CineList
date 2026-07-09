@@ -8,7 +8,7 @@
             <div>
 
                 <h1 class="text-4xl font-bold text-white">
-                    🎬 My Watchlist
+                    🎬 My Watchlists
                 </h1>
 
                 <p class="text-gray-400 mt-2">
